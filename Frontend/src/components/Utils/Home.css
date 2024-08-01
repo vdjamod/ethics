@@ -1,0 +1,26 @@
+* {
+  padding: 0;
+  margin: 0;
+  border: 1px solid black;
+}
+
+/* body {
+  background-color: white;
+  color: black;
+} */
+
+.Main-Home {
+  height: 90vh;
+  width: 100%;
+  /* display: flex; */
+  border: 3px solid black;
+  text-align: center;
+}
+
+.links {
+}
+
+.home-logo {
+  width: 25rem;
+  height: 25rem;
+}
