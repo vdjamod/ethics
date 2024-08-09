@@ -1,8 +1,8 @@
-* {
+/* * {
   padding: 0;
   margin: 0;
   border: 1px solid black;
-}
+} */
 
 /* body {
   background-color: white;
@@ -13,7 +13,6 @@
   height: 90vh;
   width: 100%;
   /* display: flex; */
-  border: 3px solid black;
   text-align: center;
 }
 

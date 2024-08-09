@@ -1,4 +1,6 @@
-export default function Signin() {
+import React from "react";
+
+function Signin() {
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -14,7 +16,11 @@ export default function Signin() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="/signin" method="post">
+          <form
+            className="space-y-6"
+            action="http://127.0.0.1:8000/signin"
+            method="post"
+          >
             <div>
               <label
                 htmlFor="email"
@@ -77,3 +83,5 @@ export default function Signin() {
     </>
   );
 }
+
+export default Signin;

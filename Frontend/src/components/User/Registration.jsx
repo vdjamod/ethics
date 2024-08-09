@@ -14,9 +14,12 @@ export default function Registration() {
             Create Account
           </h2>
         </div>
-
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="/registration" method="get">
+          <form
+            className="space-y-6"
+            action="http://127.0.0.1:8000/registration"
+            method="post"
+          >
             <div>
               <label
                 htmlFor="name"
