@@ -16,6 +16,12 @@ import User from "./components/User/User";
 import Settings from "./components/User/Settings";
 import Search from "./components/User/Search";
 
+//Trip
+import NewTrip from "./components/Trip/NewTrip";
+
+//Chat
+import Chat from "./components/Chat/Chat";
+
 function App() {
   return (
     <>
@@ -23,7 +29,6 @@ function App() {
         {/* <Header /> */}
         <Routes>
           <Route path="/" element={<Home />} />
-
           {/* User */}
           <Route path="/signin" element={<Signin />} />
           <Route path="/registration" element={<Registration />} />
@@ -33,9 +38,14 @@ function App() {
           <Route path="/user/settings" element={<Settings />} />
           <Route path="/search" element={<Search />} />
 
+          {/* Trip */}
+          <Route path="/user/newtrip" element={<NewTrip />} />
+
+          {/* Chat */}
+          <Route path="/user/chat" element={<Chat />} />
+
           <Route path="*" element={<PageNotFound />} />
         </Routes>
-        <Footer />
       </Router>
     </>
   );

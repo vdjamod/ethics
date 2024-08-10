@@ -2,7 +2,12 @@ from pydantic import BaseModel
 
 class User(BaseModel):
     name:str
-    email:str
     username:str
-    mobile:int
+    email:str
     password:str
+    profile_picture:str
+    bio:str
+    website:str
+    trips:list
+    following:list
+    follower:list

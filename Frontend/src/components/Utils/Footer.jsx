@@ -2,11 +2,11 @@ import { Typography } from "@material-tailwind/react";
 
 export default function Footer() {
   return (
-    <footer className="flex w-full flex-row flex-wrap items-center justify-center gap-y-6 gap-x-12 py-6 text-center md:justify-between p-4 fixed left-0 bottom-0 opacity-100">
-      <Typography color="blue-gray" className="font-normal">
+    <footer className="flex w-full flex-row flex-wrap items-center justify-center gap-y-6 gap-x-12 py-6 text-center md:justify-between p-4 fixed left-0 bottom-0 ">
+      <Typography color="blue-gray" className="font-normal opacity-60">
         &copy; 2024 Ethics Social Hub
       </Typography>
-      <ul className="flex flex-wrap items-center gap-y-2 gap-x-8">
+      <ul className="flex flex-wrap items-center gap-y-2 gap-x-8 opacity-60">
         <li>
           <Typography
             as="a"

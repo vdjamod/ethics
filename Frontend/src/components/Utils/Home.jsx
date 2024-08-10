@@ -2,13 +2,21 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Logo from "../../assets/Ethics_Logo.png";
 import "./Home.css";
+import Footer from "./Footer";
 
 function Home() {
   return (
     <>
       <div className="Main-Home">
         <div>
-          <img src={Logo} className="home-logo" alt="" />
+          <div className="logo-center m-4 justify-center ">
+            <img
+              src={Logo}
+              className="home-logo border border-sky-500"
+              alt=""
+            />
+          </div>
+
           <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl ">
             Ethics : Travel Hub
           </h1>
@@ -27,7 +35,9 @@ function Home() {
             </Link>
           </div>
         </div>
+        <a href="/user/home">User Home</a>
       </div>
+      <Footer />
     </>
   );
 }
