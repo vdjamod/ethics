@@ -8,7 +8,7 @@ import PageNotFound from "./components/Utils/PageNotFound";
 import Home from "./components/Utils/Home";
 
 //User
-import Signin from "./components/User/SignIn";
+import Signin from "./components/User/Signin";
 import Registration from "./components/User/Registration";
 import UserHome from "./components/User/UserHome";
 import EditProfile from "./components/User/EditProfile";
