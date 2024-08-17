@@ -13,11 +13,7 @@ function Signin() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form
-            className="space-y-6"
-            action="http://127.0.0.1:8000/signin"
-            method="post"
-          >
+          <form className="space-y-6" action="/signin" method="post">
             <div>
               <label
                 htmlFor="username"

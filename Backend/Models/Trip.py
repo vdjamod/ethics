@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class User(BaseModel):
+class Trip(BaseModel):
     source:str
     place:list
     desciption:str

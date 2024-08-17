@@ -1,12 +1,36 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+
 import Logo from "../../assets/Ethics_Logo.png";
 
 export default function NewTrip() {
+  const { username } = useParams();
+  const [visitedPlace, setVisitedPlace] = useState(1);
+  // <div className="place">
+  //   <input
+  //     id="destination"
+  //     name="destination"
+  //     type="text"
+  //     required
+  //     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+  //   />
+  // </div>;
+  const clickHandlerPlace = () => {
+    setVisitedPlace(visitedPlace + 1);
+    let placeDiv = document.getElementById("place");
+    let newInput = document.createElement("input");
+    newInput.id = "destination";
+    newInput.name = `destination${visitedPlace}`;
+    newInput.required = true;
+    newInput.className +=
+      "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6";
+    placeDiv.appendChild(newInput);
+  };
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          {/* <img className="mx-auto h-24 w-auto " src={Logo} alt="Your Company" /> */}
+          <img className="mx-auto h-24 w-auto " src={Logo} alt="Your Company" />
 
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             New Trip
@@ -15,9 +39,26 @@ export default function NewTrip() {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form
             className="space-y-6"
-            action="http://127.0.0.1:8000/registration"
+            action={`http://127.0.0.1:8000/API/${username}/newtrip`}
             method="post"
           >
+            <div>
+              <label
+                htmlFor="Trip_Name"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Trip Name
+              </label>
+              <div className="mt-2">
+                <input
+                  id="Trip_Name"
+                  name="Trip_Name"
+                  type="text"
+                  required
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
             <div>
               <label
                 htmlFor="date"
@@ -46,6 +87,7 @@ export default function NewTrip() {
                 id="status"
                 name="status"
                 type="radio"
+                value={"future"}
                 required
                 className=" rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -54,6 +96,7 @@ export default function NewTrip() {
                 id="status"
                 name="status"
                 type="radio"
+                value={"current"}
                 required
                 className="ml-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -62,6 +105,7 @@ export default function NewTrip() {
                 id="status"
                 name="status"
                 type="radio"
+                value={"past"}
                 required
                 className="ml-4 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -88,20 +132,29 @@ export default function NewTrip() {
             <div>
               <div className="flex items-center justify-between">
                 <label
-                  htmlFor="destination"
+                  htmlFor="destination1"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Destination
+                  Visit Place
                 </label>
               </div>
               <div className="mt-2">
-                <input
-                  id="destination"
-                  name="destination"
-                  type="text"
-                  required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
+                <div id="place">
+                  <input
+                    id="destination"
+                    name="destination"
+                    type="text"
+                    required
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+                <button
+                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  type="button"
+                  onClick={clickHandlerPlace}
+                >
+                  Add Place
+                </button>
               </div>
             </div>
             <div>
@@ -116,7 +169,6 @@ export default function NewTrip() {
                   id="discription"
                   name="discription"
                   type="text"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -134,7 +186,6 @@ export default function NewTrip() {
                   name="friends"
                   type="text"
                   autoComplete="friends"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>

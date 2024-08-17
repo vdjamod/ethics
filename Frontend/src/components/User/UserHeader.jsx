@@ -1,5 +1,6 @@
-import Logo from "../../assets/Ethics_Logo.png";
-import React from "react";
+import { useParams } from "react-router-dom";
+import Logo from "../../assets/Ethics_Logo_Header.png";
+
 import Search from "./Search";
 import {
   Disclosure,
@@ -11,20 +12,22 @@ import {
   MenuItems,
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-
-const navigation = [
-  { name: "Home", href: "/user/home", current: false },
-
-  { name: "New Trip", href: "/user/newtrip", current: false },
-  { name: "Chat", href: "/user/chat", current: false },
-  { name: "Search", href: "/search", current: false },
-];
+// eslint-disable-next-line react-hooks/rules-of-hooks
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function UserHeader() {
+  const { username } = useParams();
+
+  const navigation = [
+    { name: "Home", href: `/${username}/home `, current: false },
+
+    { name: "New Trip", href: `/${username}/newtrip `, current: false },
+    { name: "Chat", href: `/${username}/chat `, current: false },
+    { name: "Search", href: `/${username}/search `, current: false },
+  ];
   return (
     <>
       <Disclosure as="nav" className="bg-gray-800">
@@ -48,7 +51,7 @@ export default function UserHeader() {
             <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
               <div className="flex flex-shrink-0 items-center">
                 <a href="/user/home">
-                  <img alt="Ethics Logo" src={Logo} className="h-8 w-auto" />
+                  <img alt="Ethics Logo" src={Logo} className="h-10 w-auto" />
                 </a>
               </div>
               <div className="hidden sm:ml-6 sm:block">
@@ -83,8 +86,8 @@ export default function UserHeader() {
 
               {/* Profile dropdown */}
 
-              <a className="flex  ml-4  " href="/user">
-                <span className="text-white content-center  ">hbsolanki</span>
+              <a className="flex  ml-4  " href={`/${username}`}>
+                <span className="text-white content-center  ">{username}</span>
                 <Menu as="div" className="relative ml-3">
                   <div>
                     <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">

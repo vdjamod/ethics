@@ -8,12 +8,12 @@ import PageNotFound from "./components/Utils/PageNotFound";
 import Home from "./components/Utils/Home";
 
 //User
-import Signin from "./components/User/Signin";
+import Signin from "./components/User/SignIn";
 import Registration from "./components/User/Registration";
 import UserHome from "./components/User/UserHome";
 import EditProfile from "./components/User/EditProfile";
 import User from "./components/User/User";
-import Settings from "./components/User/Settings";
+import ProfileSetting from "./components/User/ProfileSetting";
 import Search from "./components/User/Search";
 
 //Trip
@@ -32,17 +32,20 @@ function App() {
           {/* User */}
           <Route path="/signin" element={<Signin />} />
           <Route path="/registration" element={<Registration />} />
-          <Route path="/user/home" element={<UserHome />} />
-          <Route path="/user/editProfile" element={<EditProfile />} />
-          <Route path="/user/" element={<User />} />
-          <Route path="/user/settings" element={<Settings />} />
-          <Route path="/search" element={<Search />} />
+          <Route path="/:username/home" element={<UserHome />} />
+          <Route path="/:username/editProfile" element={<EditProfile />} />
+          <Route path="/:username/" element={<User />} />
+          <Route
+            path="/:username/profilesetting"
+            element={<ProfileSetting />}
+          />
+          <Route path="/:username" element={<Search />} />
 
           {/* Trip */}
-          <Route path="/user/newtrip" element={<NewTrip />} />
+          <Route path="/:username/newtrip" element={<NewTrip />} />
 
           {/* Chat */}
-          <Route path="/user/chat" element={<Chat />} />
+          <Route path="/:username/chat" element={<Chat />} />
 
           <Route path="*" element={<PageNotFound />} />
         </Routes>
