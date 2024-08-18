@@ -13,7 +13,7 @@ export default function Registration() {
           </h2>
         </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="/registration" method="post">
+          <form className="space-y-6" action="/API/registration" method="post">
             <div>
               <label
                 htmlFor="name"

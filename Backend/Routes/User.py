@@ -38,7 +38,7 @@ UserRouter=APIRouter()
 
 
 # Registration
-@UserRouter.post("/registration")
+@UserRouter.post("/API/registration")
 async def user_registration(request:Request):
     form_data=dict(await request.form()) 
     print(form_data)
@@ -46,7 +46,7 @@ async def user_registration(request:Request):
     return RedirectResponse(url=f"http://localhost:5173/{form_data['username']}/home",status_code=302)
 
 # Signin
-@UserRouter.post("/signin")
+@UserRouter.post("/API/signin")
 async def user_signin(request:Request):
     form_data=dict(await request.form())
     db_data=conn.Ethics.User.find({"username":form_data["username"]})
@@ -63,8 +63,10 @@ async def user_data(request:Request):
     print(username)
     user_data=conn.Ethics.User.find(username)
     user_data=list(user_data)[0]
+    user_data["tripp"]={}
     user_data["_id"]=str(user_data["_id"])
     for i in range(len(user_data["trips"])):
+        # user_data["tripp"][f'{str(i)}']=await get_tripdata(user_data["trips"][i])
         user_data["trips"][i]=await get_tripdata(user_data["trips"][i])
 
     print(user_data)

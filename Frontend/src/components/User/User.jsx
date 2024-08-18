@@ -16,12 +16,12 @@ function User() {
       // console.log(typeof userData);
     }
     getData();
-    console.log(userData);
   }, []);
   return (
     <>
+      {/* {console.log(userData.tripp["0"])} */}
       <div className="user border border-gray-500 h-screen m-8">
-        <div className="upper h-2/5 w-full  flex ">
+        <div className="upper h-2/5 xw-full  flex ">
           <div className="profile-picture">
             <img
               src={Logo}
@@ -33,7 +33,7 @@ function User() {
           </div>
           <div className="info h-full content-center ">
             <p>@{username} </p>
-            <p>{userData.name}</p>
+            {/* <p>{userData.name}</p> */}
             <p>
               Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum
               libero dolor quas sint, esse, minus iste corporis nihil vitae
