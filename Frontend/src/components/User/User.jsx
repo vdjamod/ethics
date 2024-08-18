@@ -3,59 +3,35 @@ import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import Logo from "../../assets/Ethics_Logo.png";
 import ProfileTrip from "./ProfileCompo/ProfileTrip";
+import UserProfile from "./UserProfile";
 
 function User() {
   const { username } = useParams();
-  const [userData, setUserData] = useState();
+  const [userData, setUserData] = useState({});
+  let TripArray;
+  let user_data;
   useEffect(() => {
     async function getData() {
-      const user_data = (await axios.get(`/API/${username}`)).data;
+      user_data = (await axios.get(`/API/${username}`)).data;
       // console.log(user_data);
-
+      // console.log(user_data["trips"][0]);
       setUserData(user_data);
+      // TripArray = userData["trips"];
+      // console.log(userData["trips"]);
       // console.log(typeof userData);
     }
     getData();
   }, []);
   return (
     <>
-      {/* {console.log(userData.tripp["0"])} */}
+      {
+        // user_data ? console.log(user_data["trips"][0]) : ""
+        // console.log(userData)
+        userData["trips"] ? console.log(userData["trips"][0]) : ""
+        // console.log(TripArray)
+      }
       <div className="user border border-gray-500 h-screen m-8">
-        <div className="upper h-2/5 xw-full  flex ">
-          <div className="profile-picture">
-            <img
-              src={Logo}
-              alt=""
-              className="rounded-full"
-              width={300}
-              height={100}
-            />
-          </div>
-          <div className="info h-full content-center ">
-            <p>@{username} </p>
-            {/* <p>{userData.name}</p> */}
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum
-              libero dolor quas sint, esse, minus iste corporis nihil vitae
-              iusto maxime blanditiis magnam similique voluptatum veritatis
-              consequuntur ullam eum laborum. 🧿
-            </p>
-            <a className="text-blue-600" href="https://github.com/hbsolanki">
-              https://github.com/hbsolanki
-            </a>
-          </div>
-          <div className="buttons justify-center content-end ">
-            <Link
-              className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-              to={`/${username}/profilesetting`}
-            >
-              Settings
-            </Link>
-            <div className="trip-search">
-              <div></div>
-            </div>
-          </div>
-        </div>
+        {userData.name ? <UserProfile userData={userData} /> : ""}
         <div className="Search-Trip ">
           <div className="mt-2 text-center ">
             <input
@@ -70,8 +46,12 @@ function User() {
           </div>
         </div>
         <div className="lower h-3/5 w-full ">
+          {userData["trips"]
+            ? userData["trips"].map((trip) => (
+                <ProfileTrip key={trip["_id"]} trip={trip} />
+              ))
+            : ""}
           {/* {console.log(typeof userData["trips"][0])} */}
-          {/* <ProfileTrip trip={userData["trips"]} /> */}
         </div>
       </div>
     </>

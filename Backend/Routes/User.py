@@ -63,7 +63,7 @@ async def user_data(request:Request):
     print(username)
     user_data=conn.Ethics.User.find(username)
     user_data=list(user_data)[0]
-    user_data["tripp"]={}
+    # user_data["tripp"]={}
     user_data["_id"]=str(user_data["_id"])
     for i in range(len(user_data["trips"])):
         # user_data["tripp"][f'{str(i)}']=await get_tripdata(user_data["trips"][i])
