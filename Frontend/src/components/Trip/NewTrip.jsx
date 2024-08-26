@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import Logo from "../../assets/Ethics_Logo.png";
 
 export default function NewTrip() {
   const { username } = useParams();
   const [visitedPlace, setVisitedPlace] = useState(1);
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({});
   // <div className="place">
   //   <input
   //     id="destination"
@@ -26,6 +28,39 @@ export default function NewTrip() {
       "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6";
     placeDiv.appendChild(newInput);
   };
+
+  // const handelChange = (e) => {
+  //   const name = e.target.name;
+  //   const value = e.target.value;
+  //   setFormData({ ...formData, [name]: value });
+  // };
+
+  // const handelSubmit = async (e) => {
+  //   e.preventDefault();
+  //   console.log(formData);
+
+  //   const token = localStorage.getItem("token");
+  //   console.log(token);
+  //   if (token) {
+  //     try {
+  //       const response = await axios
+  //         .post(`/API/${username}/newtrip`, formData, {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //             "Content-Type": "application/json",
+  //           },
+  //         })
+  //         .then(() => {
+  //           navigate(`/${formData.username}/home`);
+  //         })
+  //         .catch((error) => {
+  //           alert(error);
+  //         });
+  //     } catch (err) {
+  //       console.log(err.message);
+  //     }
+  //   }
+  // };
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -40,6 +75,7 @@ export default function NewTrip() {
           <form
             className="space-y-6"
             action={`http://127.0.0.1:8000/API/${username}/newtrip`}
+            // onSubmit={handelSubmit}
             method="post"
           >
             <div>
@@ -51,6 +87,7 @@ export default function NewTrip() {
               </label>
               <div className="mt-2">
                 <input
+                  // onChange={handelChange}
                   id="Trip_Name"
                   name="Trip_Name"
                   type="text"
@@ -68,6 +105,7 @@ export default function NewTrip() {
               </label>
               <div className="mt-2">
                 <input
+                  // onChange={handelChange}
                   id="date"
                   name="date"
                   type="date"
@@ -84,6 +122,7 @@ export default function NewTrip() {
                 Status :
               </label>
               <input
+                // onChange={handelChange}
                 id="status"
                 name="status"
                 type="radio"
@@ -93,6 +132,7 @@ export default function NewTrip() {
               />
               Future
               <input
+                // onChange={handelChange}
                 id="status"
                 name="status"
                 type="radio"
@@ -102,6 +142,7 @@ export default function NewTrip() {
               />
               Current
               <input
+                // onChange={handelChange}
                 id="status"
                 name="status"
                 type="radio"
@@ -121,6 +162,7 @@ export default function NewTrip() {
               </label>
               <div className="mt-2">
                 <input
+                  // onChange={handelChange}
                   id="source"
                   name="source"
                   type="text"
@@ -141,6 +183,7 @@ export default function NewTrip() {
               <div className="mt-2">
                 <div id="place">
                   <input
+                    // onChange={handelChange}
                     id="destination"
                     name="destination"
                     type="text"
@@ -166,6 +209,7 @@ export default function NewTrip() {
               </label>
               <div className="mt-2">
                 <textarea
+                  // onChange={handelChange}
                   id="discription"
                   name="discription"
                   type="text"
@@ -182,6 +226,7 @@ export default function NewTrip() {
               </label>
               <div className="mt-2">
                 <input
+                  // onChange={handelChange}
                   id="friends"
                   name="friends"
                   type="text"
@@ -198,6 +243,7 @@ export default function NewTrip() {
               >
                 <span>Upload a Photos</span>
                 <input
+                  // onChange={handelChange}
                   id="file-upload"
                   name="file-upload"
                   type="file"

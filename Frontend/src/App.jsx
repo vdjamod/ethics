@@ -10,17 +10,26 @@ import Home from "./components/Utils/Home";
 //User
 import Signin from "./components/User/SignIn";
 import Registration from "./components/User/Registration";
-import UserHome from "./components/User/UserHome";
-import EditProfile from "./components/User/EditProfile";
-import User from "./components/User/User";
-import ProfileSetting from "./components/User/ProfileSetting";
-import Search from "./components/User/Search";
+import UserHome from "./components/User/Home/UserHome";
+import User from "./components/User/Profile/User";
+import ProfileSetting from "./components/User/Profile/ProfileSetting";
 
 //Trip
 import NewTrip from "./components/Trip/NewTrip";
+import Trip from "./components/Trip/Trip";
 
 //Chat
 import Chat from "./components/Chat/Chat";
+
+//Search
+import Search from "./components/User/Home/Search";
+
+//Follow
+import Follower from "./components/User/Follow/Follower";
+import Following from "./components/User/Follow/Following";
+
+//notification
+import Notification from "./components/User/Home/Notification";
 
 function App() {
   return (
@@ -33,20 +42,28 @@ function App() {
           <Route path="/signin" element={<Signin />} />
           <Route path="/registration" element={<Registration />} />
           <Route path="/:username/home" element={<UserHome />} />
-          <Route path="/:username/editProfile" element={<EditProfile />} />
+          {/* <Route path="/:username/editProfile" element={<EditProfile />} /> */}
           <Route path="/:username/" element={<User />} />
           <Route
             path="/:username/profilesetting"
             element={<ProfileSetting />}
           />
           <Route path="/:username" element={<Search />} />
-
           {/* Trip */}
           <Route path="/:username/newtrip" element={<NewTrip />} />
-
+          <Route path="/:username/trip/:tripid" element={<Trip />} />
+          {/* Follow */}
+          <Route path="/:username/follower/list" element={<Follower />} />
+          <Route path="/:username/following/list" element={<Following />} />
           {/* Chat */}
           <Route path="/:username/chat" element={<Chat />} />
+          {/* Search */}
+          <Route path="/:username/search" element={<Search />} />
 
+          {/* notification */}
+          <Route path="/:username/notification" element={<Notification />} />
+
+          <Route path="/pagenotfound" element={<PageNotFound />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </Router>

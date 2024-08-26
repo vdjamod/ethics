@@ -1,7 +1,29 @@
-import React from "react";
+import { useState } from "react";
 import Logo from "../../assets/Ethics_Logo.png";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Registration() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({});
+
+  const handelChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setFormData({ ...formData, [name]: value });
+  };
+  const handelSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("/API/registration", formData);
+      const accessToken = response.data.access_token;
+      localStorage.setItem("token", accessToken);
+      navigate(`/${formData.username}/home`);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -13,7 +35,9 @@ export default function Registration() {
           </h2>
         </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="/API/registration" method="post">
+          {/* action="/API/registration" */}
+
+          <form className="space-y-6" onSubmit={handelSubmit} method="post">
             <div>
               <label
                 htmlFor="name"
@@ -23,6 +47,7 @@ export default function Registration() {
               </label>
               <div className="mt-2">
                 <input
+                  onChange={handelChange}
                   id="name"
                   name="name"
                   type="text"
@@ -43,6 +68,7 @@ export default function Registration() {
               </div>
               <div className="mt-2">
                 <input
+                  onChange={handelChange}
                   id="email"
                   name="email"
                   type="email"
@@ -61,6 +87,7 @@ export default function Registration() {
               </label>
               <div className="mt-2">
                 <input
+                  onChange={handelChange}
                   id="username"
                   name="username"
                   type="text"
@@ -98,6 +125,7 @@ export default function Registration() {
               </label>
               <div className="mt-2">
                 <input
+                  onChange={handelChange}
                   id="password"
                   name="password"
                   type="password"

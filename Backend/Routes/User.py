@@ -1,114 +1,187 @@
-from fastapi import APIRouter,Request,Form
-from fastapi.responses import RedirectResponse,JSONResponse
+from fastapi import APIRouter,Request,Form, Depends, HTTPException, status
+from fastapi.responses import RedirectResponse,JSONResponse,Response
 from Models.User import User
 import json
 from Config.db import conn  # [import-error]
+from bson import ObjectId
+
+from Auth.Auth import ACCESS_TOKEN_EXPIRE_MINUTES,create_access_token,authenticate_user,get_current_user
+from datetime import timedelta
+from pydantic import BaseModel,EmailStr
+
 
 
 UserRouter=APIRouter()
 
-# # Registration
-# @UserRouter.post("/registration")
-# async def user_registration(name:str=Form(...),email: str = Form(...),username:str=Form(...),password:str=Form(...)):
-#     form_data=User(name=name,email=email,username=username,password=password) # type: ignore
-#     print(form_data)
-#     # form=await request.form()
-#     # formDic=dict(form)
-#     # print(formDic)
-#     # return formDic
-#     # conn.Ethics.User.insert_one(formDic)
-#     return RedirectResponse(url="http://localhost:5173/user/home" ,status_code=302)
 
-# #signin
-# @UserRouter.post("/signin")
-# async def user_signin(request:Request):
-#     # form=await request.form()
-#     # formDic=dict(form)
-#     # UserData=conn.Ethics.User.find_one({"email":formDic["email"] })
-#     # if UserData["password"]==formDic["password"]: # type: ignore
-#     #     return RedirectResponse(url=f"/{UserData['username']}") # type: ignore
-#     # else:
-#     #     return "Not -Found"
+# Login Model
+class UserLogin(BaseModel):
+    username: str
+    password: str
 
-#     return RedirectResponse(url="http://localhost:5173/user/home",status_code=302)
-
-# @UserRouter.post("/signin")
-# def redirect_to_google():
-#     return RedirectResponse(url="https://www.google.com", status_code=302)
-
+# User Registration Model (for cleaner input)
+class UserRegistration(BaseModel):
+    name: str
+    username: str
+    email: EmailStr
+    password: str
 
 # Registration
 @UserRouter.post("/API/registration")
-async def user_registration(request:Request):
-    form_data=dict(await request.form()) 
-    print(form_data)
-    conn.Ethics.User.insert_one(form_data)
-    return RedirectResponse(url=f"http://localhost:5173/{form_data['username']}/home",status_code=302)
+async def user_registration(user_registration:User):
+    
+    conn.Ethics.User.insert_one(dict(user_registration))
+    access_token_expires=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user_registration.username},
+        expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
 
 # Signin
 @UserRouter.post("/API/signin")
-async def user_signin(request:Request):
-    form_data=dict(await request.form())
-    db_data=conn.Ethics.User.find({"username":form_data["username"]})
-    print(db_data)
-    if form_data['username']:
-        return RedirectResponse(url=f"http://localhost:5173/{form_data['username']}/home",status_code=302)
-    else:
-        return RedirectResponse(url=f"http://localhost:5173/signin",status_code=302)
-    
+async def user_signin(user_login:UserLogin):
+    authenticated_user = authenticate_user(user_login.username, user_login.password)
+    if not authenticated_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user_login.username},
+        expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+   
 #:username
 @UserRouter.get("/API/{username}")
 async def user_data(request:Request):
     username=request.path_params
-    print(username)
-    user_data=conn.Ethics.User.find(username)
-    user_data=list(user_data)[0]
-    # user_data["tripp"]={}
-    user_data["_id"]=str(user_data["_id"])
-    for i in range(len(user_data["trips"])):
-        # user_data["tripp"][f'{str(i)}']=await get_tripdata(user_data["trips"][i])
-        user_data["trips"][i]=await get_tripdata(user_data["trips"][i])
+    user_data= conn.Ethics.User.find_one(username) # type: ignore
+    try:
+        user_data["_id"]=str(user_data["_id"])
+        
+        for i in range(len(user_data["trips"])):
+            user_data["trips"][i]=await get_tripdata(user_data["trips"][i])
 
-    print(user_data)
-    return JSONResponse(user_data)
+        for i in range(len(user_data["notification"])):
+            user_data["notification"][i]=await get_tripdata(user_data["notification"][i])
+
+        for i in range(len(user_data["recent_activity"])):
+            user_data["recent_activity"][i]=await get_tripdata(user_data["recent_activity"][i])
+
+        return JSONResponse(user_data)
+    except :
+        raise HTTPException(status_code=404, detail="User Not Found")
 
 
 #Get Trip
 async def get_tripdata(id):
-    data=conn.Ethics.Trip.find({"_id":id})
-    data=list(data)[0]
-    data["_id"]=str(data["_id"]) # type: ignore
+    data=conn.Ethics.Trip.find_one({"_id":id})
+    if data:
+        data["_id"]=str(data["_id"]) # type: ignore
     return data
+
+
+#/:username/trip/:tripid
+@UserRouter.get("/API/{username}/trip/{tripid}")
+async def get_trip(request:Request):
+    params=request.path_params
+    tripid=params["tripid"]
+    object_id = ObjectId(tripid)
+    trip_data=await get_tripdata(object_id)
+    return JSONResponse( trip_data)
+    
 
 
 #User Profile Update
 @UserRouter.post("/API/{username}/profilesetting")
 async def user_profilesetting(request:Request):
-    pass
-
-
-#New Trip
-@UserRouter.post("/API/{username}/newtrip")
-async def user_newtrip(request:Request):
     username=request.path_params["username"]
-    data=await request.form()
-    form_dict={}
-    destination=[]
-    for i in data:
-        if "destination" in i:
-            destination.append(data[i])
-        else:
-            form_dict[i]=data[i]
-    form_dict["destination"]=destination
-            
-    trip=conn.Ethics.Trip.insert_one(form_dict)
-    user_data=conn.Ethics.User.find({"username":"hbsolanki"})
-    # try:
-    user_data=list(user_data)[0]
-    print(trip.inserted_id)
-    print(user_data)
-    user_data["trips"].append(trip.inserted_id)
-    conn.Ethics.User.update_one({"username":"hbsolanki"},{"$set":{"trips":user_data["trips"]}})
-    # except:
-    #     print("some error")
-    return RedirectResponse(url=f"http://localhost:5173/{username}/home",status_code=302)
+    form_data=await request.form()
+    form_data=dict(form_data)
+    # print(form_data)
+    conn.Ethics.User.update_one({"username":username},{"$set":form_data})
+    return RedirectResponse(url=f"http://localhost:5173/{username}",status_code=302)
+
+
+#Search 
+#get All User
+@UserRouter.get("/API/{username}/search/alluser")
+async def get_allUser(request:Request):
+    username=request.path_params
+
+    all_user=conn.Ethics.User.find() # type: ignore
+    
+    try:
+       all_user=list(all_user)
+       allUserRetrun=[]
+       for user in all_user:
+           user={"username":user["username"],"pic":""}
+           allUserRetrun.append(user)
+       return allUserRetrun
+           
+    except :
+        return ""
+        # raise HTTPException(status_code=404, detail="User Not Found")
+
+
+
+
+#For Following
+@UserRouter.get("/API/{username}/following/{following_username}")
+async def user_following(request: Request):
+    try:
+        params=request.path_params
+        print(params)
+        username=params["username"]
+        following_username=params["following_username"]
+        user=conn.Ethics.User.find_one({"username":username})
+        user["followings"].append((following_username))
+        conn.Ethics.User.update_one({"username":username},{"$set":{"followings":user["followings"]}})
+        # print(user["followings"])
+        user_following=conn.Ethics.User.find_one({"username":username})
+        print(user_following["followers"])
+        user_following["followers"].append(username)
+        print(user_following["followers"])
+        conn.Ethics.User.update_one({"username":following_username},{"$set":{"followers":user_following["followers"]}})
+        return {"message": "Follow out successfully"}
+    
+    except:
+        return HTTPException(status_code=404, detail="User Not Found")
+
+
+
+# Logout
+@UserRouter.post("/API/logout")
+async def user_logout(response: Response):
+    current_user: User = Depends(get_current_user)
+    if current_user:
+        response.delete_cookie(key="access_token")
+        return {"message": "Logged out successfully"}
+    else :
+        return  HTTPException(status_code=404, detail="User Not Found")
+    
+
+@UserRouter.get("/API/{username}/recentactivity")
+async def user_recent_activity(request:Request):
+    username=request.path_params
+    user_data=conn.Ethics.User.find_one(username) 
+    recentactivity=[]
+    for i in range(len(user_data["recent_activity"])):
+        recentactivity.append(await get_tripdata(user_data["recent_activity"][i]))
+    return recentactivity
+
+@UserRouter.get("/API/{username}/notification")
+async def user_recent_activity(request:Request):
+    username=request.path_params
+    user_data=conn.Ethics.User.find_one(username) 
+    notification=[]
+    for i in user_data["notification"]:
+        print(i)
+        i["trip_id"]=str(i["trip_id"])
+        notification.append(i)
+    # print(user_data["notification"])
+    return notification

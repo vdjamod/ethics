@@ -31,7 +31,7 @@ function Home() {
             </Link>
           </div>
         </div>
-        <a href="/user/home">User Home</a>
+        <a href="/hbsolanki/home">User Home</a>
       </div>
       <Footer />
     </>

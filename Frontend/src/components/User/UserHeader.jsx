@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import Logo from "../../assets/Ethics_Logo_Header.png";
 
-import Search from "./Search";
+import Search from "./Home/Search";
 import {
   Disclosure,
   DisclosureButton,
@@ -75,14 +75,15 @@ export default function UserHeader() {
               </div>
             </div>
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              <button
+              <a
                 type="button"
+                href={`/${username}/notification`}
                 className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
               >
                 <span className="absolute -inset-1.5" />
                 <span className="sr-only">View notifications</span>
                 <BellIcon aria-hidden="true" className="h-6 w-6" />
-              </button>
+              </a>
 
               {/* Profile dropdown */}
 

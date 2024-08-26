@@ -1,7 +1,28 @@
-import React from "react";
+import { useState } from "react";
 import Logo from "../../assets/Ethics_Logo.png";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Signin() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({});
+
+  const handelChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setFormData({ ...formData, [name]: value });
+  };
+  const handelSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("/API/signin", formData);
+      const accessToken = response.data.access_token;
+      localStorage.setItem("token", accessToken);
+      navigate(`/${formData.username}/home`);
+    } catch (err) {
+      alert("Invalid username or password");
+    }
+  };
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -13,7 +34,8 @@ function Signin() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="/API/signin" method="post">
+          {/* action="/API/signin" */}
+          <form className="space-y-6" onSubmit={handelSubmit} method="post">
             <div>
               <label
                 htmlFor="username"
@@ -23,6 +45,7 @@ function Signin() {
               </label>
               <div className="mt-2">
                 <input
+                  onChange={handelChange}
                   id="username"
                   name="username"
                   type="text"
@@ -52,6 +75,7 @@ function Signin() {
               </div>
               <div className="mt-2">
                 <input
+                  onChange={handelChange}
                   id="password"
                   name="password"
                   type="password"
