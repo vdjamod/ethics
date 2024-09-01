@@ -36,6 +36,7 @@ export default function ProfileSetting() {
           <form
             className="space-y-6"
             action={`/API/${username}/profilesetting`}
+            encType="multipart/form-data"
             method="post"
           >
             <div>

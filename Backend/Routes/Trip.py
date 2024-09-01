@@ -1,5 +1,6 @@
 from datetime import datetime
-from fastapi import APIRouter,Request
+from typing import List, Union
+from fastapi import APIRouter, File,Request, UploadFile
 from fastapi.responses import RedirectResponse,JSONResponse
 from Config.db import conn  # [import-error]
 from bson import ObjectId
@@ -28,13 +29,16 @@ async def get_trip(request:Request):
 
 def setup_destination(data):
     form_dict={}
-    destination=[]
+    destination=[] 
     for i in data:
         if "destination" in i:
             destination.append(data[i])
+        if "photos"==i:
+            continue   
         else:
             form_dict[i]=data[i]
     form_dict["destination"]=destination
+
     return form_dict
 
 def friends_mention(data,username,tripid):
@@ -63,14 +67,40 @@ def create_notification(username,data,tripid):
     }
     return notification
 
+import shutil
+import os
+import cloudinary
+import cloudinary.uploader
+
+cloudinary.config( 
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("CLOUD_API_KEY"),
+    api_secret=os.getenv("CLOUD_API_SECRET")
+)
+
+
+
 #New Trip
 @TripRouter.post("/API/{username}/newtrip")
-async def user_newtrip( request:Request):
+async def user_newtrip(
+    username: str,
+    request: Request,
+    photos: List[UploadFile] = File(...)
+):
+    print(photos)
     username=request.path_params["username"]
     data=await request.form()
     trip_data=setup_destination(data)
     trip_data["username"]=username
-            
+    photo_filenames = []
+    for photo in photos: # type: ignore
+        if photo.filename:
+            result = cloudinary.uploader.upload(photo.file)
+            photo_filenames.append(result['secure_url'])
+    trip_data["photos"]=photo_filenames
+    trip_data["likes"]=0
+    trip_data["comments"]=[]
+
     trip=conn.Ethics.Trip.insert_one(trip_data)
     user_data=conn.Ethics.User.find_one({"username":username})
     user_data["trips"].append(trip.inserted_id)  # type: ignore
@@ -80,8 +110,33 @@ async def user_newtrip( request:Request):
 
     for follower in user_data["followers"]: # type: ignore
         follow=conn.Ethics.User.find_one({"username":follower})
-        follow["recent_activity"].append(trip.inserted_id)
+        follow["recent_activity"].append(trip.inserted_id) # type: ignore
         conn.Ethics.User.find_one_and_update({"username":follower},{"$set":{"recent_activity":follow["recent_activity"]}}) # type: ignore
 
     return RedirectResponse(url=f"http://localhost:5173/hbsolanki/home",status_code=302)
 
+# async def user_newtrip( photos: Union[UploadFile, List[UploadFile], None] = File(None),
+#     request: Request):
+#     print(photos)
+#     username=request.path_params["username"]
+#     data=await request.form()
+#     print(data)
+#     trip_data=setup_destination(data)
+#     trip_data["username"]=username
+#     print(trip_data)
+   
+            
+    # trip=conn.Ethics.Trip.insert_one(trip_data)
+    # user_data=conn.Ethics.User.find_one({"username":username})
+    # user_data["trips"].append(trip.inserted_id)  # type: ignore
+    # conn.Ethics.User.update_one({"username":username},{"$set":{"trips":user_data["trips"]}}) # type: ignore
+    # friends_mention(data,username,trip.inserted_id)
+    # print(user_data)
+
+    # for follower in user_data["followers"]: # type: ignore
+    #     follow=conn.Ethics.User.find_one({"username":follower})
+    #     follow["recent_activity"].append(trip.inserted_id) # type: ignore
+    #     conn.Ethics.User.find_one_and_update({"username":follower},{"$set":{"recent_activity":follow["recent_activity"]}}) # type: ignore
+
+    # return RedirectResponse(url=f"http://localhost:5173/hbsolanki/home",status_code=302)
+# 

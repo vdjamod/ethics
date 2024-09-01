@@ -1,14 +1,11 @@
-import React from "react";
-import Logo from "../../../assets/Ethics_Logo.png";
 import { Link } from "react-router-dom";
-
 function UserProfile({ userData }) {
   return (
     <>
       <div className="upper h-2/5 xw-full  flex justify-center mb-2">
         <div className="profile-picture ">
           <img
-            src={Logo}
+            src={userData["profile_picture"]}
             alt=""
             className="rounded-full"
             width={300}

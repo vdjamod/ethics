@@ -74,6 +74,7 @@ export default function NewTrip() {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form
             className="space-y-6"
+            encType="multipart/form-data"
             action={`http://127.0.0.1:8000/API/${username}/newtrip`}
             // onSubmit={handelSubmit}
             method="post"
@@ -238,14 +239,14 @@ export default function NewTrip() {
 
             <div className="mt-4 flex text-sm leading-6 text-gray-600">
               <label
-                htmlFor="file-upload"
+                htmlFor="photos"
                 className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
               >
                 <span>Upload a Photos</span>
                 <input
                   // onChange={handelChange}
-                  id="file-upload"
-                  name="file-upload"
+                  id="photos"
+                  name="photos"
                   type="file"
                   className="sr-only"
                   multiple

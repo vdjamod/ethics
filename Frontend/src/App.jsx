@@ -31,6 +31,10 @@ import Following from "./components/User/Follow/Following";
 //notification
 import Notification from "./components/User/Home/Notification";
 
+//Utils
+import AboutUs from "./components/Utils/AboutUs";
+import ContactUs from "./components/Utils/ContactUs";
+
 function App() {
   return (
     <>
@@ -62,6 +66,10 @@ function App() {
 
           {/* notification */}
           <Route path="/:username/notification" element={<Notification />} />
+
+          {/* Footer Utils */}
+          <Route path="/aboutus" element={<AboutUs />} />
+          <Route path="/contactus" element={<ContactUs />} />
 
           <Route path="/pagenotfound" element={<PageNotFound />} />
           <Route path="*" element={<PageNotFound />} />

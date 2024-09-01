@@ -2,6 +2,7 @@ import { useState } from "react";
 import Logo from "../../assets/Ethics_Logo.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import CustomAlert from "../Alert/CustomAlert";
 
 function Signin() {
   const navigate = useNavigate();
@@ -18,6 +19,9 @@ function Signin() {
       const response = await axios.post("/API/signin", formData);
       const accessToken = response.data.access_token;
       localStorage.setItem("token", accessToken);
+
+      // <CustomAlert message={"Welcome back! You've successfully signed in."} />;
+      alert("Welcome back! You've successfully signed in.");
       navigate(`/${formData.username}/home`);
     } catch (err) {
       alert("Invalid username or password");

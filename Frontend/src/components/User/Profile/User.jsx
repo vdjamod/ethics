@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
-import Logo from "../../../assets/Ethics_Logo.png";
 import ProfileTrip from "./ProfileTrip";
 import UserProfile from "./UserProfile";
 import { useNavigate } from "react-router-dom";
+import WentWrong from "../../Alert/WentWrong";
 
 import { jwtDecode } from "jwt-decode";
 import Breadcrumbs from "./Breadcrumbs";
@@ -48,14 +48,13 @@ function User() {
           setTOKEN_USERNAME(TOKENUSERNAME);
           setUserIsValid(TOKENUSERNAME == username);
         } catch (error) {
-          console.error("Invalid token:", error);
+          <WentWrong />;
         }
-      } else {
-        console.error("No token found");
       }
     }
     getData();
   }, []);
+
   const searchChangeHandler = (e) => {
     const searchWord = e.target.value;
     setWordEntered(searchWord);
@@ -72,27 +71,46 @@ function User() {
   const handelFollow = async () => {
     try {
       if (TOKEN_USERNAME) {
-        const response = await axios.get(
-          `/API/${TOKEN_USERNAME}/following/${username}`,
-          {
+        const response = await axios
+          .get(`/API/${TOKEN_USERNAME}/following/${username}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
-        );
-        console.log(response);
+          })
+          .then(() => {
+            navigate(0);
+          })
+          .then((err) => {
+            <WentWrong />;
+          });
       }
     } catch (error) {
       console.log("Some Error");
     }
   };
-  const handelUnfollow = () => {};
+  const handelUnfollow = async () => {
+    try {
+      if (TOKEN_USERNAME) {
+        const response = await axios
+          .get(`/API/${TOKEN_USERNAME}/unfollow/${username}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then(() => {
+            navigate(0);
+          });
+      }
+    } catch (error) {
+      <WentWrong />;
+    }
+  };
   return (
     <>
       <div className="user border border-gray-500  m-8">
         {userData ? (
           <>
-            <Breadcrumbs username={TOKEN_USERNAME} />
+            {TOKEN_USERNAME ? <Breadcrumbs username={TOKEN_USERNAME} /> : ""}
             <UserProfile userData={userData} />
 
             <div className="button ">
@@ -104,23 +122,27 @@ function User() {
                   >
                     Settings
                   </Link>
-                  <button onClick={() => <Logout />}>Logout</button>
+                  <Logout />
                 </div>
-              ) : !userData.followers ||
+              ) : TOKEN_USERNAME ? (
+                !userData.followers ||
                 !userData.followers.includes(TOKEN_USERNAME) ? (
-                <button
-                  onClick={handelFollow}
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                >
-                  Follow
-                </button>
+                  <button
+                    onClick={handelFollow}
+                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                  >
+                    Follow
+                  </button>
+                ) : (
+                  <button
+                    onClick={handelUnfollow}
+                    className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                  >
+                    Unfollow
+                  </button>
+                )
               ) : (
-                <button
-                  onClick={handelUnfollow}
-                  className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                >
-                  Unfollow
-                </button>
+                ""
               )}
               <div className="mt-2 text-center ">
                 <input

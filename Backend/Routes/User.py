@@ -1,4 +1,4 @@
-from fastapi import APIRouter,Request,Form, Depends, HTTPException, status
+from fastapi import APIRouter,Request,Form, Depends, HTTPException, status,File
 from fastapi.responses import RedirectResponse,JSONResponse,Response
 from Models.User import User
 import json
@@ -8,7 +8,9 @@ from bson import ObjectId
 from Auth.Auth import ACCESS_TOKEN_EXPIRE_MINUTES,create_access_token,authenticate_user,get_current_user
 from datetime import timedelta
 from pydantic import BaseModel,EmailStr
-
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 
 UserRouter=APIRouter()
@@ -95,6 +97,20 @@ async def get_trip(request:Request):
     return JSONResponse( trip_data)
     
 
+import shutil
+import os
+import cloudinary
+import cloudinary.uploader
+
+cloudinary.config( 
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("CLOUD_API_KEY"),
+    api_secret=os.getenv("CLOUD_API_SECRET")
+)
+
+
+
+
 
 #User Profile Update
 @UserRouter.post("/API/{username}/profilesetting")
@@ -102,9 +118,20 @@ async def user_profilesetting(request:Request):
     username=request.path_params["username"]
     form_data=await request.form()
     form_data=dict(form_data)
-    # print(form_data)
+    profile_picture=form_data["profile_picture"]
+    
+    upload_result = cloudinary.uploader.upload(profile_picture.file, folder="profile_pictures")
+    form_data["profile_picture"]=upload_result["url"]
     conn.Ethics.User.update_one({"username":username},{"$set":form_data})
     return RedirectResponse(url=f"http://localhost:5173/{username}",status_code=302)
+
+    # return {"message": "File uploaded successfully", "filename": profile_picture.filename}
+    
+    
+    # except Exception as e:
+    #     return JSONResponse(content={"message": "Error uploading file", "error": str(e)}, status_code=500)
+    # # conn.Ethics.User.update_one({"username":username},{"$set":form_data})
+    # return RedirectResponse(url=f"http://localhost:5173/{username}",status_code=302)
 
 
 #Search 
@@ -135,22 +162,46 @@ async def get_allUser(request:Request):
 async def user_following(request: Request):
     try:
         params=request.path_params
-        print(params)
         username=params["username"]
         following_username=params["following_username"]
         user=conn.Ethics.User.find_one({"username":username})
         user["followings"].append((following_username))
         conn.Ethics.User.update_one({"username":username},{"$set":{"followings":user["followings"]}})
         # print(user["followings"])
-        user_following=conn.Ethics.User.find_one({"username":username})
-        print(user_following["followers"])
+        user_following=conn.Ethics.User.find_one({"username":following_username})
         user_following["followers"].append(username)
+        conn.Ethics.User.update_one({"username":following_username},{"$set":{"followers":user_following["followers"]}})
+        return {"message": "Follow out successfully"}
+    
+    except:
+        return HTTPException(status_code=404, detail="User Not Found")
+
+#Remove Following 
+@UserRouter.get("/API/{username}/unfollow/{following_username}")
+async def user_following(request: Request):
+    try:
+        params=request.path_params
+        username=params["username"]
+        following_username=params["following_username"]
+        user=conn.Ethics.User.find_one({"username":username})
+        user["followings"].remove((following_username))
+        for trip in user["recent_activity"]:
+            trip_db=conn.Ethics.Trip.find_one(trip)
+            if trip_db["username"]==following_username:
+                user["recent_activity"].remove(trip)
+
+        conn.Ethics.User.update_one({"username":username},{"$set":{"followings":user["followings"],"recent_activity":user["recent_activity"]}})
+
+        # print(user["followings"])
+        user_following=conn.Ethics.User.find_one({"username":following_username})
+        user_following["followers"].remove(username)
         print(user_following["followers"])
         conn.Ethics.User.update_one({"username":following_username},{"$set":{"followers":user_following["followers"]}})
         return {"message": "Follow out successfully"}
     
     except:
         return HTTPException(status_code=404, detail="User Not Found")
+
 
 
 
@@ -180,8 +231,55 @@ async def user_recent_activity(request:Request):
     user_data=conn.Ethics.User.find_one(username) 
     notification=[]
     for i in user_data["notification"]:
-        print(i)
         i["trip_id"]=str(i["trip_id"])
         notification.append(i)
     # print(user_data["notification"])
     return notification
+
+@UserRouter.get("/API/{username}/notification/accept/{tripid}")
+async def user_notification_accept(request:Request):
+    params=request.path_params
+    username=params["username"]
+    tripid=params["tripid"]
+
+    user_data=conn.Ethics.User.find_one({"username":username})
+    user_data["trips"].append(ObjectId(tripid))
+    for i in range(len(user_data["notification"])):
+        if str(user_data["notification"][i]["trip_id"])==tripid:
+            user_data["notification"][i]["request"]=True
+
+    conn.Ethics.User.update_one({"username":username},{"$set":{"trips":user_data["trips"],"notification":user_data["notification"]}})
+
+    return {"message":"request successfully accept"}
+
+@UserRouter.get("/API/{username}/notification/reject/{tripid}")
+async def user_notification_reject(request:Request):
+    params=request.path_params
+    username=params["username"]
+    tripid=params["tripid"]
+
+    user_data=conn.Ethics.User.find_one({"username":username})
+    for i in range(len(user_data["notification"])):
+        if str(user_data["notification"][i]["trip_id"])==tripid:
+            user_data["notification"].remove(user_data["notification"][i])
+
+    conn.Ethics.User.update_one({"username":username},{"$set":{"notification":user_data["notification"]}})
+
+    return {"message":"request successfully accept"}
+
+
+@UserRouter.get("/API/{username}/notification/remove/{tripid}")
+async def user_notification_remove(request:Request):
+    params=request.path_params
+    username=params["username"]
+    tripid=params["tripid"]
+
+    user_data=conn.Ethics.User.find_one({"username":username})
+    user_data["trips"].remove(ObjectId(tripid))
+    for i in range(len(user_data["notification"])):
+        if str(user_data["notification"][i]["trip_id"])==tripid:
+            user_data["notification"][i]["request"]=False
+
+    conn.Ethics.User.update_one({"username":username},{"$set":{"trips":user_data["trips"],"notification":user_data["notification"]}})
+
+    return {"message":"request successfully remove"}

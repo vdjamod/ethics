@@ -10,7 +10,7 @@ export default function Footer() {
         <li>
           <Typography
             as="a"
-            href="#"
+            href="/aboutus"
             color="blue-gray"
             className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
           >
@@ -20,7 +20,7 @@ export default function Footer() {
         <li>
           <Typography
             as="a"
-            href="#"
+            href="/license"
             color="blue-gray"
             className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
           >
@@ -30,7 +30,7 @@ export default function Footer() {
         <li>
           <Typography
             as="a"
-            href="#"
+            href="https://github.com/hbsolanki/Ethics-Explore_Travel_Social_Hub"
             color="blue-gray"
             className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
           >
@@ -40,7 +40,7 @@ export default function Footer() {
         <li>
           <Typography
             as="a"
-            href="#"
+            href="/contactus"
             color="blue-gray"
             className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
           >

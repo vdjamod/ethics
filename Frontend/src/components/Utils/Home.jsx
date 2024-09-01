@@ -31,7 +31,6 @@ function Home() {
             </Link>
           </div>
         </div>
-        <a href="/hbsolanki/home">User Home</a>
       </div>
       <Footer />
     </>

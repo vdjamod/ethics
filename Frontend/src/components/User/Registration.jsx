@@ -2,6 +2,7 @@ import { useState } from "react";
 import Logo from "../../assets/Ethics_Logo.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import CustomAlert from "../Alert/CustomAlert";
 
 export default function Registration() {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ export default function Registration() {
       const response = await axios.post("/API/registration", formData);
       const accessToken = response.data.access_token;
       localStorage.setItem("token", accessToken);
+
+      <CustomAlert message={"Welcome back! You've successfully signed in."} />;
       navigate(`/${formData.username}/home`);
     } catch (err) {
       console.log(err.message);

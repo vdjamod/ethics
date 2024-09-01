@@ -15,8 +15,8 @@ function Following() {
   }, []);
   return (
     <>
-      {userData["Following"]
-        ? userData["Following"].map((following, idx) => (
+      {userData["followings"]
+        ? userData["followings"].map((following, idx) => (
             <p key={idx}>{following}</p>
           ))
         : ""}
