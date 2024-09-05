@@ -21,7 +21,6 @@ function Signin() {
       localStorage.setItem("token", accessToken);
 
       // <CustomAlert message={"Welcome back! You've successfully signed in."} />;
-      alert("Welcome back! You've successfully signed in.");
       navigate(`/${formData.username}/home`);
     } catch (err) {
       alert("Invalid username or password");

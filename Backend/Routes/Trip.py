@@ -87,16 +87,17 @@ async def user_newtrip(
     request: Request,
     photos: List[UploadFile] = File(...)
 ):
-    print(photos)
+    
     username=request.path_params["username"]
     data=await request.form()
     trip_data=setup_destination(data)
     trip_data["username"]=username
     photo_filenames = []
-    for photo in photos: # type: ignore
-        if photo.filename:
-            result = cloudinary.uploader.upload(photo.file)
-            photo_filenames.append(result['secure_url'])
+    if photos:
+        for photo in photos: # type: ignore
+            if photo.filename:
+                result = cloudinary.uploader.upload(photo.file)
+                photo_filenames.append(result['secure_url'])
     trip_data["photos"]=photo_filenames
     trip_data["likes"]=0
     trip_data["comments"]=[]

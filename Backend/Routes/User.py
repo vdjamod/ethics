@@ -31,8 +31,9 @@ class UserRegistration(BaseModel):
 # Registration
 @UserRouter.post("/API/registration")
 async def user_registration(user_registration:User):
-    
-    conn.Ethics.User.insert_one(dict(user_registration))
+    user_data=dict(user_registration)
+    user_data["profile_picture"]="https://res.cloudinary.com/ddm8umfu7/image/upload/v1725167390/profile_pictures/ipeyo0cpwxtjzlyyaehs.webp"
+    conn.Ethics.User.insert_one(user_data)
     access_token_expires=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
         data={"sub": user_registration.username},
@@ -118,20 +119,21 @@ async def user_profilesetting(request:Request):
     username=request.path_params["username"]
     form_data=await request.form()
     form_data=dict(form_data)
-    profile_picture=form_data["profile_picture"]
     
-    upload_result = cloudinary.uploader.upload(profile_picture.file, folder="profile_pictures")
-    form_data["profile_picture"]=upload_result["url"]
+    user=conn.Ethics.User.find_one({"username":username})
+    try:
+        profile_picture=form_data["profile_picture"]
+        upload_result = cloudinary.uploader.upload(profile_picture.file, folder="profile_pictures")
+        form_data["profile_picture"]=upload_result["url"]
+    except:
+        if not user["profile_picture"]: 
+            form_data["profile_picture"]="https://res.cloudinary.com/ddm8umfu7/image/upload/v1725167390/profile_pictures/ipeyo0cpwxtjzlyyaehs.webp"
+        else:
+            form_data["profile_picture"]=user["profile_picture"]
+        
+        
     conn.Ethics.User.update_one({"username":username},{"$set":form_data})
     return RedirectResponse(url=f"http://localhost:5173/{username}",status_code=302)
-
-    # return {"message": "File uploaded successfully", "filename": profile_picture.filename}
-    
-    
-    # except Exception as e:
-    #     return JSONResponse(content={"message": "Error uploading file", "error": str(e)}, status_code=500)
-    # # conn.Ethics.User.update_one({"username":username},{"$set":form_data})
-    # return RedirectResponse(url=f"http://localhost:5173/{username}",status_code=302)
 
 
 #Search 

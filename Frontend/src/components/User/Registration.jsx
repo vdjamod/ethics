@@ -20,7 +20,6 @@ export default function Registration() {
       const accessToken = response.data.access_token;
       localStorage.setItem("token", accessToken);
 
-      <CustomAlert message={"Welcome back! You've successfully signed in."} />;
       navigate(`/${formData.username}/home`);
     } catch (err) {
       console.log(err.message);
