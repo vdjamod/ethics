@@ -148,7 +148,7 @@ async def get_allUser(request:Request):
        all_user=list(all_user)
        allUserRetrun=[]
        for user in all_user:
-           user={"username":user["username"],"pic":""}
+           user={"username":user["username"],"name":user["name"],"profile_picture":user["profile_picture"]}
            allUserRetrun.append(user)
        return allUserRetrun
            

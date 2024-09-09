@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 
 function Search() {
   const [allUser, setAllUser] = useState([]);
-  // const navigate = useNavigate();
   const { username } = useParams();
-
   const [wordEntered, setWordEntered] = useState("");
   const [filteredData, setFilteredData] = useState([]);
 
@@ -23,12 +21,12 @@ function Search() {
           const user_data = response.data; // Extract data from the response
           setAllUser(user_data); // Log or process the data
         } catch (error) {
-          // navigate("/pagenotfound");
+          alert(error);
         }
       }
     }
     getData();
-  }, []);
+  }, [username]);
 
   const searchChangeHandler = (e) => {
     const searchWord = e.target.value;
@@ -36,48 +34,58 @@ function Search() {
     const filter_data = allUser.filter((value) => {
       return value.username.toLowerCase().includes(searchWord.toLowerCase());
     });
-    if (searchWord === "") {
-      setFilteredData([]);
-    } else {
-      setFilteredData(filter_data);
-    }
+    setFilteredData(searchWord === "" ? [] : filter_data);
   };
 
   return (
-    <>
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        {/* action="/API/signin" */}
-        <div>
-          <label
-            htmlFor="username"
-            className="block text-sm font-medium leading-6 text-gray-900"
-          >
-            Search
-          </label>
-          <div className="mt-2">
-            <input
-              onChange={searchChangeHandler}
-              value={wordEntered}
-              id="username"
-              name="username"
-              type="text"
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            />
-          </div>
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full sm:w-3/4 lg:w-1/2">
+        <label
+          htmlFor="username"
+          className="block text-lg font-semibold text-gray-900 mb-4"
+        >
+          Search for Users
+        </label>
+        <input
+          onChange={searchChangeHandler}
+          value={wordEntered}
+          id="username"
+          name="username"
+          type="text"
+          placeholder="Search..."
+          className="block w-full rounded-md border border-gray-300 py-2 px-4 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm mb-4"
+        />
+        <div className="overflow-y-auto max-h-96">
+          <ul className="space-y-2">
+            {filteredData.length > 0 ? (
+              filteredData.map((user) => (
+                <li
+                  key={user.id}
+                  className="flex items-center space-x-4 p-2 rounded hover:bg-gray-100 cursor-pointer"
+                >
+                  <img
+                    src={user.profile_picture}
+                    alt={`${user.username}'s profile`}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <div className="flex flex-col">
+                    <a
+                      href={`/${user.username}`}
+                      className="text-sm font-semibold text-gray-900 hover:underline"
+                    >
+                      {user.username}
+                    </a>
+                    <span className="text-sm text-gray-500">{user.name}</span>
+                  </div>
+                </li>
+              ))
+            ) : (
+              <p className="text-gray-500 text-center">No users found</p>
+            )}
+          </ul>
         </div>
       </div>
-
-      {filteredData
-        ? filteredData.map((user, idx) => (
-            <>
-              <div key={idx}>
-                <a href={`/${user.username}`}>{user.username}</a>
-                <br />
-              </div>
-            </>
-          ))
-        : ""}
-    </>
+    </div>
   );
 }
 

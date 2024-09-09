@@ -2,52 +2,59 @@ import { Typography } from "@material-tailwind/react";
 
 export default function Footer() {
   return (
-    <footer className="flex w-full flex-row flex-wrap items-center justify-center gap-y-6 gap-x-12 py-6 text-center md:justify-between p-4 fixed left-0 bottom-0 ">
-      <Typography color="blue-gray" className="font-normal opacity-60">
-        &copy; 2024 Ethics Social Hub
-      </Typography>
-      <ul className="flex flex-wrap items-center gap-y-2 gap-x-8 opacity-60">
-        <li>
-          <Typography
-            as="a"
-            href="/aboutus"
-            color="blue-gray"
-            className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
-          >
-            About Us
+    <footer className="bg-white py-4 border-t border-gray-200 fixed inset-x-0 bottom-0">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col items-center md:flex-row md:justify-between">
+          <Typography color="gray" className="font-normal text-gray-700">
+            &copy; 2024{" "}
+            <a href="/" className="hover:text-blue-500 transition-colors">
+              Ethics Social Hub
+            </a>
           </Typography>
-        </li>
-        <li>
-          <Typography
-            as="a"
-            href="/license"
-            color="blue-gray"
-            className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
-          >
-            License
-          </Typography>
-        </li>
-        <li>
-          <Typography
-            as="a"
-            href="https://github.com/hbsolanki/Ethics-Explore_Travel_Social_Hub"
-            color="blue-gray"
-            className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
-          >
-            Contribute
-          </Typography>
-        </li>
-        <li>
-          <Typography
-            as="a"
-            href="/contactus"
-            color="blue-gray"
-            className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
-          >
-            Contact Us
-          </Typography>
-        </li>
-      </ul>
+          <ul className="flex flex-wrap items-center gap-4 mt-4 md:mt-0">
+            <li>
+              <Typography
+                as="a"
+                href="/aboutus"
+                color="gray"
+                className="font-normal transition-colors hover:text-blue-500"
+              >
+                About Us
+              </Typography>
+            </li>
+            <li>
+              <Typography
+                as="a"
+                href="/license"
+                color="gray"
+                className="font-normal transition-colors hover:text-blue-500"
+              >
+                License
+              </Typography>
+            </li>
+            <li>
+              <Typography
+                as="a"
+                href="https://github.com/hbsolanki/Ethics-Explore_Travel_Social_Hub"
+                color="gray"
+                className="font-normal transition-colors hover:text-blue-500"
+              >
+                Contribute
+              </Typography>
+            </li>
+            <li>
+              <Typography
+                as="a"
+                href="/contactus"
+                color="gray"
+                className="font-normal transition-colors hover:text-blue-500"
+              >
+                Contact Us
+              </Typography>
+            </li>
+          </ul>
+        </div>
+      </div>
     </footer>
   );
 }

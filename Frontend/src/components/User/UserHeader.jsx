@@ -25,8 +25,12 @@ export default function UserHeader({ user_Profile }) {
     { name: "Home", href: `/${username}/home `, current: false },
 
     { name: "New Trip", href: `/${username}/newtrip `, current: false },
-    { name: "Chat", href: `/${username}/chat `, current: false },
     { name: "Search", href: `/${username}/search `, current: false },
+    {
+      name: "Explore India",
+      href: `https://www.incredibleindia.org/content/incredible-india-v2/en/travel/repository.html`,
+      current: false,
+    },
   ];
   return (
     <>

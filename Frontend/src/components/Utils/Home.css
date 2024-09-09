@@ -1,15 +1,44 @@
-/* body {
-  background-color: white;
-  color: black;
-} */
-
-.Main-Home {
-  height: 90vh;
-  width: 100%;
-  /* display: flex; */
-  text-align: center;
+/* Add this to your Home.css file if you need additional custom styles */
+.bg-white {
+  background-color: #ffffff;
 }
-.home-logo {
-  width: 25rem;
-  height: 25rem;
+
+.text-gray-900 {
+  color: #1f2937;
+}
+
+.text-gray-700 {
+  color: #4b5563;
+}
+
+.text-gray-100 {
+  color: #f3f4f6;
+}
+
+.hover\:bg-gray-100:hover {
+  background-color: #f3f4f6;
+}
+
+.focus\:ring-2:focus {
+  ring-width: 2px;
+}
+
+.focus\:ring-gray-300:focus {
+  ring-color: #d1d5db;
+}
+
+.shadow-md {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-gray-900\/10 {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.hover\:shadow-lg:hover {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.transition-all {
+  transition: all 0.3s ease-in-out;
 }

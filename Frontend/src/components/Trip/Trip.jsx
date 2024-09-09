@@ -2,156 +2,80 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-// function Trip() {
-//   const { username, tripid } = useParams();
-//   const [tripData, setTripData] = useState({});
-//   let trip_data;
-//   useEffect(() => {
-//     async function getData() {
-//       trip_data = (await axios.get(`/API/${username}/trip/${tripid}`)).data;
-//       setTripData(trip_data);
-//     }
-//     getData();
-//   }, []);
-//   return (
-//     <>
-//       {tripData["_id"] ? (
-//         <>
-//           <h1>
-//             {tripData.Trip_Name} <span>{tripData.status}</span>
-//           </h1>
-//           <span> {tripData.date}</span>
-//           <br />
-//           <h4>
-//             {tripData.source}
-//             {tripData.destination.map((name, idx) => (
-//               <span className="opacity-75" key={idx}>
-//                 {" "}
-//                 {name}
-//               </span>
-//             ))}
-//           </h4>
-//           <p>{tripData.discription}</p>
-//           <p>
-//             {/* {tripData.friends.map((name, idx) => (
-//               <span key={idx}> {name}</span>
-//             ))} */}
-//             {tripData.friends}
-//           </p>
-//         </>
-//       ) : (
-//         ""
-//       )}
-//     </>
-//   );
-// }
-
-// export default Trip;
-
-import React from "react";
-
 const Trip = () => {
   const { username, tripid } = useParams();
   const [tripData, setTripData] = useState({});
-  let trip_data;
+
   useEffect(() => {
     async function getData() {
-      trip_data = (await axios.get(`/API/${username}/trip/${tripid}`)).data;
-      setTripData(trip_data);
+      const tripData = (await axios.get(`/API/${username}/trip/${tripid}`))
+        .data;
+      setTripData(tripData);
     }
     getData();
-  }, []);
+  }, [username, tripid]);
+
   return (
     <>
       {tripData ? (
-        <>
-          <section className="pb-10 pt-20 dark:bg-dark lg:pb-20 lg:pt-[120px]">
-            <div className="container mx-auto">
-              <div className="-mx-4 flex flex-wrap">
-                <div className="w-full px-4">
-                  <div className="mx-auto mb-[60px] max-w-[510px] text-center">
-                    <span className="mb-3 text-3xl font-bold leading-[1.2] text-dark dark:text-black sm:text-4xl md:text-[40px]">
-                      {" "}
-                      {tripData.Trip_Name}{" "}
-                    </span>
-                    <span>{tripData.status}</span> <span> {tripData.date}</span>
-                    <br />
-                    <br />
-                    <span className="mb-2 block text-lg font-semibold text-primary">
-                      {tripData.source}
-                      {tripData.destination
-                        ? tripData.destination.map((name, idx) => {
-                            return (
-                              <span className="opacity-75" key={idx}>
-                                {" "}
-                                {name}
-                              </span>
-                            );
-                          })
-                        : ""}
-                    </span>
-                    <p className="text-base text-body-color dark:text-dark-6">
-                      {tripData.discription}
-                    </p>
-                    <p className="text-base text-body-color dark:text-dark-6">
-                      {tripData.friends}
-                    </p>
-                  </div>
-                </div>
+        <section className="pb-10 pt-10 lg:pt-20 lg:pb-20 bg-gray-50">
+          <div className="container mx-auto px-4">
+            {/* Trip Information */}
+            <div className="max-w-4xl mx-auto mb-16 text-center">
+              <a className="font-medium" href={`/${tripData.usermame}`}>
+                @{tripData.username}
+              </a>
+              <h2 className="text-4xl font-bold text-gray-800 mb-4">
+                {tripData.Trip_Name}
+              </h2>
+              <div className="flex justify-center space-x-6 text-gray-600 mb-6">
+                <span>{tripData.status}</span>
+                <span>{tripData.date}</span>
               </div>
-
-              <div className="-mx-4 flex flex-wrap justify-center">
-                {tripData.photos
-                  ? tripData.photos.map((link, idx) => {
-                      return <TeamCard key={idx} imageSrc={link} />;
-                    })
-                  : ""}
+              <div className="text-lg font-medium text-gray-700 mb-4">
+                <p>Source: {tripData.source}</p>
+                {tripData.destination && (
+                  <p>
+                    Destinations:{" "}
+                    {tripData.destination.map((name, idx) => (
+                      <span key={idx} className="inline-block mr-2 opacity-75">
+                        {name}
+                      </span>
+                    ))}
+                  </p>
+                )}
               </div>
+              <p className="text-gray-600 mb-4">{tripData.discription}</p>
+              <p className="text-gray-600">Friends: {tripData.friends}</p>
             </div>
-          </section>
-        </>
+
+            {/* Photo Gallery */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {tripData.photos
+                ? tripData.photos.map((link, idx) => (
+                    <PhotoCard key={idx} imageSrc={link} />
+                  ))
+                : null}
+            </div>
+          </div>
+        </section>
       ) : (
-        ""
+        <p>Loading...</p>
       )}
     </>
   );
 };
 
-export default Trip;
-
-const TeamCard = ({ imageSrc }) => {
+const PhotoCard = ({ imageSrc }) => {
   return (
-    <>
-      <div className="w-full px-4 md:w-1/2 xl:w-1/4">
-        <div className="mx-auto mb-10 w-full max-w-[370px]">
-          <div className="relative overflow-hidden rounded-lg">
-            <img src={imageSrc} alt="" className="w-full" />
-          </div>
-        </div>
-      </div>
-    </>
+    <div className="w-full h-auto overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+      <img
+        src={imageSrc}
+        alt="Trip photo"
+        className="w-full h-full object-cover"
+      />
+    </div>
   );
 };
 
-{
-  /* <TeamCard
-                  name="Coriss Ambady"
-                  profession="Web Developer"
-                  imageSrc="https://i.ibb.co/T1J9LD4/image-03-2.jpg"
-                />
-                <TeamCard
-                  name="Coriss Ambady"
-                  profession="Web Developer"
-                  imageSrc="https://i.ibb.co/8P6cvVy/image-01-1.jpg"
-                />
-                <TeamCard
-                  name="Coriss Ambady"
-                  profession="Web Developer"
-                  imageSrc="https://i.ibb.co/30tGtjP/image-04.jpg"
-                />
-                <TeamCard
-                  name="Coriss Ambady"
-                  profession="Web Developer"
-                  imageSrc="https://i.ibb.co/yVVT0Dp/image-02-2.jpg"
-                /> */
-}
+export default Trip;
